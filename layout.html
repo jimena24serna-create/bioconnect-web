@@ -1,0 +1,19 @@
+<aside class="lateral">
+  <h1>🌿 BioConnect</h1>
+  <nav>
+    @for (opcion of menu; track opcion.ruta) {
+      <a [routerLink]="opcion.ruta" routerLinkActive="activo">{{ opcion.icono }} {{ opcion.texto }}</a>
+    }
+  </nav>
+  <button class="salir" (click)="salir()">🚪 Cerrar sesión</button>
+</aside>
+<div class="contenido">
+  <header>
+    <span class="muted">Conectamos personas para cuidar la vida</span>
+    <div class="usuario">
+      <span>{{ auth.usuarioActual()?.nombre }}</span>
+      <div class="avatar">{{ iniciales() }}</div>
+    </div>
+  </header>
+  <main><router-outlet /></main>
+</div>

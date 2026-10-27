@@ -1,0 +1,71 @@
+<h2>🦜 Biodiversidad</h2>
+@if (mensaje()) { <div class="exito">{{ mensaje() }}</div> }
+@if (error()) { <div class="alerta">{{ error() }}</div> }
+<div class="grid2">
+  <section class="tarjeta">
+    <h3>Índice de biodiversidad</h3>
+    <select name="mi" [(ngModel)]="municipioIndice" (ngModelChange)="cargar()">
+      @for (m of municipios; track m.id) { <option [ngValue]="m.id">{{ m.nombre }}</option> }
+    </select>
+    @if (indice(); as i) {
+      <div style="display: flex; gap: 26px; margin-top: 12px">
+        <div><b style="font-size: 2rem; color: #2e7d32">{{ i.indice_shannon }}</b><p class="muted">Índice de Shannon</p></div>
+        <div><b style="font-size: 2rem; color: #2e7d32">{{ i.riqueza_especies }}</b><p class="muted">Especies</p></div>
+        <div><b style="font-size: 2rem; color: #2e7d32">{{ i.total_individuos }}</b><p class="muted">Individuos</p></div>
+      </div>
+    }
+  </section>
+  <form class="tarjeta" #f="ngForm" (ngSubmit)="registrar()">
+    <h3>Registrar especie observada</h3>
+    <div class="fila">
+      <div><label for="e">Especie</label>
+        <select id="e" name="id_especie" [(ngModel)]="nuevoRegistro.id_especie">
+          @for (e of especies(); track e.id_especie) { <option [ngValue]="e.id_especie">{{ e.nombre_comun }}</option> }
+        </select></div>
+      <div><label for="mu">Municipio</label>
+        <select id="mu" name="id_municipio" [(ngModel)]="nuevoRegistro.id_municipio">
+          @for (m of municipios; track m.id) { <option [ngValue]="m.id">{{ m.nombre }}</option> }
+        </select></div>
+    </div>
+    <div class="fila">
+      <div><label for="fe">Fecha</label><input id="fe" name="fecha" type="date" [(ngModel)]="nuevoRegistro.fecha" required /></div>
+      <div><label for="ca">Cantidad</label><input id="ca" name="cantidad" type="number" [(ngModel)]="nuevoRegistro.cantidad" required /></div>
+    </div>
+    <button class="btn" style="margin-top: 12px">Guardar registro</button>
+  </form>
+</div>
+<section class="tarjeta">
+  <h3>Panel de registros</h3>
+  <table>
+    <tr><th>ID</th><th>Especie</th><th>Municipio</th><th>Cantidad</th><th>Fecha</th><th>Registró</th><th>Estado</th><th>Acciones</th></tr>
+    @for (r of registros(); track r.id_registro) {
+      <tr>
+        <td>{{ r.id_registro }}</td><td>{{ r.especie }}</td><td>{{ r.municipio }}</td><td>{{ r.cantidad }}</td><td>{{ r.fecha }}</td><td>{{ r.registrado_por }}</td>
+        <td>@if (r.validado) { <span class="etiqueta">Validado</span> } @else { <span class="etiqueta pendiente">Pendiente</span> }</td>
+        <td class="acciones">
+          @if (!r.validado) { <button class="btn chico" (click)="validar(r)">✅ Validar</button> }
+          <button class="btn peligro chico" (click)="eliminarRegistro(r)">🗑️</button>
+        </td>
+      </tr>
+    }
+  </table>
+</section>
+<section class="tarjeta">
+  <h3>Catálogo de especies</h3>
+  <form class="fila" #fe="ngForm" (ngSubmit)="crearEspecie()" style="align-items: end; margin-bottom: 10px">
+    <div><label for="nc">Nombre común</label><input id="nc" name="nombre_comun" [(ngModel)]="nuevaEspecie.nombre_comun" required /></div>
+    <div><label for="ncien">Nombre científico</label><input id="ncien" name="nombre_cientifico" [(ngModel)]="nuevaEspecie.nombre_cientifico" required /></div>
+    <div><label for="g">Grupo</label>
+      <select id="g" name="grupo" [(ngModel)]="nuevaEspecie.grupo">
+        <option>aves</option><option>mamíferos</option><option>anfibios</option><option>reptiles</option><option>plantas</option>
+      </select></div>
+    <div><button class="btn" [disabled]="fe.invalid">Agregar especie</button></div>
+  </form>
+  <table>
+    <tr><th>Nombre común</th><th>Nombre científico</th><th>Grupo</th><th></th></tr>
+    @for (e of especies(); track e.id_especie) {
+      <tr><td>{{ e.nombre_comun }}</td><td><i>{{ e.nombre_cientifico }}</i></td><td>{{ e.grupo }}</td>
+        <td><button class="btn peligro chico" (click)="eliminarEspecie(e)">🗑️</button></td></tr>
+    }
+  </table>
+</section>

@@ -1,0 +1,5 @@
+.kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.kpi b { display: block; font-size: 2rem; color: #2e7d32; } .kpi span { color: #6b7c70; font-size: .85rem; }
+.item { padding: 8px 0; border-bottom: 1px solid #eee; }
+.indice { display: flex; gap: 24px; } .indice b { display: block; font-size: 2rem; color: #2e7d32; }
+@media (max-width: 800px) { .kpis { grid-template-columns: 1fr 1fr; } }

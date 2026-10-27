@@ -1,0 +1,7 @@
+.acceso { min-height: 100vh; display: flex; }
+.marca { flex: 1; background: linear-gradient(135deg, #1b5e20, #43a047); color: #fff; display: flex; flex-direction: column; justify-content: center; padding: 60px; }
+.marca h1 { font-size: 3rem; } .marca p { font-size: 1.2rem; margin-top: 10px; } .marca .sub { opacity: .85; font-size: 1rem; }
+.formulario { width: 480px; display: flex; align-items: center; justify-content: center; background: #fff; padding: 30px; }
+form { width: 100%; max-width: 340px; } .btn { width: 100%; margin-top: 18px; padding: 11px; }
+.pie { text-align: center; margin-top: 14px; }
+@media (max-width: 800px) { .acceso { flex-direction: column; } .marca { padding: 40px 24px; } .formulario { width: 100%; } }

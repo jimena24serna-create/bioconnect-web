@@ -1,0 +1,42 @@
+<main class="acceso">
+  <section class="marca">
+    <h1>🌿 BioConnect</h1>
+    <p>Únete a la red de la biodiversidad</p>
+  </section>
+  <section class="formulario">
+    <form [formGroup]="formulario" (ngSubmit)="registrar()" novalidate>
+      <h2>Crear cuenta</h2>
+      @if (mensajeError()) { <div class="alerta">{{ mensajeError() }}</div> }
+      @if (mensajeExito()) { <div class="exito">{{ mensajeExito() }}</div> }
+      <label for="nombre">Nombre completo</label>
+      <input id="nombre" formControlName="nombre" />
+      @if (formulario.controls.nombre.touched && formulario.controls.nombre.invalid) { <p class="error">Mínimo 3 caracteres</p> }
+      <label for="correo">Correo electrónico</label>
+      <input id="correo" type="email" formControlName="correo" />
+      @if (formulario.controls.correo.touched && formulario.controls.correo.invalid) { <p class="error">Escribe un correo válido</p> }
+      <label for="contrasena">Contraseña</label>
+      <input id="contrasena" type="password" formControlName="contrasena" />
+      @if (formulario.controls.contrasena.touched && formulario.controls.contrasena.invalid) { <p class="error">Mínimo 8 caracteres</p> }
+      <label for="profesion">Profesión</label>
+      <input id="profesion" formControlName="profesion" />
+      <div class="fila">
+        <div>
+          <label for="rol">¿Quién eres?</label>
+          <select id="rol" formControlName="id_rol">
+            <option [value]="2">Profesional</option>
+            <option [value]="3">Estudiante</option>
+            <option [value]="4">Empleador</option>
+          </select>
+        </div>
+        <div>
+          <label for="municipio">Municipio</label>
+          <select id="municipio" formControlName="id_municipio">
+            @for (m of municipios; track m.id) { <option [value]="m.id">{{ m.nombre }}</option> }
+          </select>
+        </div>
+      </div>
+      <button class="btn" type="submit">Crear cuenta</button>
+      <p class="muted pie">¿Ya tienes cuenta? <a routerLink="/login">Ingresar</a></p>
+    </form>
+  </section>
+</main>

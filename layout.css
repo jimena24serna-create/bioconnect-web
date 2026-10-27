@@ -1,0 +1,13 @@
+:host { display: flex; min-height: 100vh; }
+.lateral { width: 220px; background: #1b5e20; color: #fff; padding: 20px 14px; display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; }
+.lateral h1 { font-size: 1.4rem; margin-bottom: 24px; }
+nav { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+nav a { color: #d6efd9; text-decoration: none; padding: 9px 12px; border-radius: 8px; font-size: .92rem; }
+nav a:hover, nav a.activo { background: #fff; color: #1b5e20; font-weight: 700; }
+.salir { background: none; border: 1px solid #a5d6a7; color: #fff; border-radius: 8px; padding: 8px; cursor: pointer; }
+.contenido { flex: 1; min-width: 0; }
+header { display: flex; justify-content: space-between; align-items: center; background: #fff; padding: 12px 24px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+.usuario { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+.avatar { width: 36px; height: 36px; border-radius: 50%; background: #a5d6a7; color: #1b5e20; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+main { padding: 22px 26px; }
+@media (max-width: 800px) { :host { flex-direction: column; } .lateral { width: 100%; height: auto; position: static; } nav { flex-direction: row; flex-wrap: wrap; } }

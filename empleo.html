@@ -1,0 +1,65 @@
+<h2>💼 Empleo</h2>
+@if (mensaje()) { <div class="exito">{{ mensaje() }}</div> }
+@if (error()) { <div class="alerta">{{ error() }}</div> }
+<div class="grid2">
+  <section>
+    <div class="tarjeta fila" style="align-items: end">
+      <div>
+        <label for="filtro">Filtrar por municipio</label>
+        <select id="filtro" name="filtro" [(ngModel)]="filtroMunicipio" (ngModelChange)="cargarOfertas()">
+          <option [ngValue]="0">Todos</option>
+          @for (m of municipios; track m.id) { <option [ngValue]="m.id">{{ m.nombre }}</option> }
+        </select>
+      </div>
+    </div>
+    @for (o of ofertas(); track o.id_oferta) {
+      <article class="tarjeta">
+        <h3>{{ o.titulo }}</h3>
+        <p class="muted">{{ o.empleador }} · {{ o.municipio }} · Cierra: {{ o.fecha_cierre }}</p>
+        <p>{{ o.descripcion }}</p>
+        <p><span class="etiqueta">$ {{ o.salario }}</span></p>
+        <div class="acciones" style="margin-top: 8px">
+          <button class="btn chico" (click)="postularme(o)">Postularme</button>
+          <button class="btn peligro chico" (click)="eliminarOferta(o)">🗑️ Eliminar</button>
+        </div>
+      </article>
+    } @empty { <p class="muted">No hay ofertas para este municipio.</p> }
+  </section>
+  <section>
+    <form class="tarjeta" #f="ngForm" (ngSubmit)="crearOferta(f)">
+      <h3>Publicar oferta</h3>
+      <label for="t">Cargo</label><input id="t" name="titulo" [(ngModel)]="nueva.titulo" required minlength="3" />
+      <label for="d">Descripción</label><textarea id="d" name="descripcion" rows="2" [(ngModel)]="nueva.descripcion" required></textarea>
+      <div class="fila">
+        <div><label for="s">Salario</label><input id="s" name="salario" type="number" min="0" [(ngModel)]="nueva.salario" required /></div>
+        <div><label for="m">Municipio</label>
+          <select id="m" name="id_municipio" [(ngModel)]="nueva.id_municipio">
+            @for (m of municipios; track m.id) { <option [ngValue]="m.id">{{ m.nombre }}</option> }
+          </select></div>
+      </div>
+      <div class="fila">
+        <div><label for="fi">Fecha</label><input id="fi" name="fecha" type="date" [(ngModel)]="nueva.fecha" required /></div>
+        <div><label for="fc">Fecha de cierre</label><input id="fc" name="fecha_cierre" type="date" [(ngModel)]="nueva.fecha_cierre" required /></div>
+      </div>
+      <button class="btn" style="margin-top: 12px" [disabled]="f.invalid">Publicar oferta</button>
+    </form>
+    <div class="tarjeta">
+      <h3>Postulaciones</h3>
+      <table>
+        <tr><th>Postulante</th><th>Oferta</th><th>Estado</th><th></th></tr>
+        @for (p of postulaciones(); track p.id_postulacion) {
+          <tr>
+            <td>{{ p.postulante }}</td><td>{{ p.oferta }}</td>
+            <td>
+              <select [ngModel]="p.estado" (ngModelChange)="cambiarEstado(p, $event)">
+                <option value="en_revision">En revisión</option><option value="entrevista">Entrevista</option>
+                <option value="seleccionada">Seleccionada</option><option value="no_seleccionada">No seleccionada</option>
+              </select>
+            </td>
+            <td><button class="btn peligro chico" (click)="eliminarPostulacion(p)">🗑️</button></td>
+          </tr>
+        }
+      </table>
+    </div>
+  </section>
+</div>

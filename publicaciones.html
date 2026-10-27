@@ -1,0 +1,36 @@
+<h2>💬 Red social</h2>
+@if (mensaje()) { <div class="exito">{{ mensaje() }}</div> }
+@if (error()) { <div class="alerta">{{ error() }}</div> }
+<form class="tarjeta" #f="ngForm" (ngSubmit)="guardar(f)">
+  <h3>{{ editandoId ? 'Editar publicación' : '¿Qué quieres compartir hoy?' }}</h3>
+  <label for="titulo">Título</label>
+  <input id="titulo" name="titulo" [(ngModel)]="nueva.titulo" required minlength="3" />
+  <label for="contenido">Contenido</label>
+  <textarea id="contenido" name="contenido" rows="3" [(ngModel)]="nueva.contenido" required></textarea>
+  <div class="fila">
+    <div>
+      <label for="tipo">Tipo</label>
+      <select id="tipo" name="tipo" [(ngModel)]="nueva.tipo">
+        <option value="publicacion">Publicación</option>
+        <option value="investigacion">Investigación</option>
+        <option value="proyecto">Proyecto</option>
+      </select>
+    </div>
+    <div class="acciones" style="align-items: end">
+      <button class="btn" type="submit" [disabled]="f.invalid">{{ editandoId ? 'Guardar cambios' : 'Publicar' }}</button>
+      @if (editandoId) { <button class="btn borde" type="button" (click)="cancelar(f)">Cancelar</button> }
+    </div>
+  </div>
+</form>
+@for (p of lista(); track p.id_publicacion) {
+  <article class="tarjeta">
+    <span class="etiqueta">{{ p.tipo }}</span>
+    <h3 style="margin-top: 6px">{{ p.titulo }}</h3>
+    <p>{{ p.contenido }}</p>
+    <p class="muted">{{ p.autor }} · {{ p.fecha }}</p>
+    <div class="acciones" style="margin-top: 8px">
+      <button class="btn borde chico" (click)="editar(p)">✏️ Editar</button>
+      <button class="btn peligro chico" (click)="eliminar(p)">🗑️ Eliminar</button>
+    </div>
+  </article>
+} @empty { <p class="muted">No hay publicaciones.</p> }

@@ -1,0 +1,25 @@
+<h2>Hola, {{ auth.usuarioActual()?.nombre }} 👋</h2>
+<div class="kpis">
+  <div class="tarjeta kpi"><b>{{ totales().usuarios }}</b><span>Usuarios registrados</span></div>
+  <div class="tarjeta kpi"><b>{{ totales().publicaciones }}</b><span>Publicaciones</span></div>
+  <div class="tarjeta kpi"><b>{{ totales().ofertas }}</b><span>Ofertas de empleo</span></div>
+  <div class="tarjeta kpi"><b>{{ totales().registros }}</b><span>Registros de especies</span></div>
+</div>
+<div class="grid2">
+  <section class="tarjeta">
+    <h3>Publicaciones recientes</h3>
+    @for (p of recientes(); track p.id_publicacion) {
+      <article class="item"><span class="etiqueta">{{ p.tipo }}</span> <b>{{ p.titulo }}</b><p class="muted">{{ p.autor }} · {{ p.fecha }}</p></article>
+    } @empty { <p class="muted">Aún no hay publicaciones.</p> }
+  </section>
+  <section class="tarjeta">
+    <h3>Biodiversidad de tu municipio</h3>
+    @if (indice(); as i) {
+      <div class="indice">
+        <div><b>{{ i.indice_shannon }}</b><span class="muted">Índice de Shannon</span></div>
+        <div><b>{{ i.riqueza_especies }}</b><span class="muted">Especies validadas</span></div>
+        <div><b>{{ i.total_individuos }}</b><span class="muted">Individuos</span></div>
+      </div>
+    }
+  </section>
+</div>

@@ -1,0 +1,25 @@
+<main class="acceso">
+  <section class="marca">
+    <h1>🌿 BioConnect</h1>
+    <p>Conectamos personas para cuidar la vida</p>
+    <p class="sub">Empleo, investigación y biodiversidad del Putumayo en un solo lugar.</p>
+  </section>
+  <section class="formulario">
+    <form [formGroup]="formulario" (ngSubmit)="ingresar()" novalidate>
+      <h2>Iniciar sesión</h2>
+      @if (mensajeError()) { <div class="alerta">{{ mensajeError() }}</div> }
+      <label for="correo">Correo electrónico</label>
+      <input id="correo" type="email" formControlName="correo" placeholder="tucorreo@ejemplo.com" />
+      @if (formulario.controls.correo.touched && formulario.controls.correo.invalid) {
+        <p class="error">Escribe un correo válido</p>
+      }
+      <label for="contrasena">Contraseña</label>
+      <input id="contrasena" type="password" formControlName="contrasena" placeholder="Mínimo 8 caracteres" />
+      @if (formulario.controls.contrasena.touched && formulario.controls.contrasena.invalid) {
+        <p class="error">La contraseña debe tener mínimo 8 caracteres</p>
+      }
+      <button class="btn" type="submit" [disabled]="cargando()">{{ cargando() ? 'Ingresando…' : 'Ingresar' }}</button>
+      <p class="muted pie">¿No tienes cuenta? <a routerLink="/registro">Crear cuenta</a></p>
+    </form>
+  </section>
+</main>
