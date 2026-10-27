@@ -1,0 +1,108 @@
+name: Construir APK de BioConnect
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Instalar Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Instalar Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Crear el proyecto Android (WebView de BioConnect)
+        run: |
+          mkdir -p apk/app/src/main/java/com/bioconnect/app
+          cat > apk/settings.gradle <<'EOF'
+          pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
+          dependencyResolutionManagement { repositories { google(); mavenCentral() } }
+          rootProject.name = 'BioConnect'
+          include ':app'
+          EOF
+          cat > apk/build.gradle <<'EOF'
+          plugins { id 'com.android.application' version '8.5.2' apply false }
+          EOF
+          cat > apk/gradle.properties <<'EOF'
+          android.useAndroidX=true
+          org.gradle.jvmargs=-Xmx2g
+          EOF
+          cat > apk/app/build.gradle <<'EOF'
+          plugins { id 'com.android.application' }
+          android {
+              namespace 'com.bioconnect.app'
+              compileSdk 34
+              defaultConfig {
+                  applicationId 'com.bioconnect.app'
+                  minSdk 21
+                  targetSdk 34
+                  versionCode 1
+                  versionName '1.0.0'
+              }
+          }
+          EOF
+          cat > apk/app/src/main/AndroidManifest.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+              <uses-permission android:name="android.permission.INTERNET" />
+              <application
+                  android:label="BioConnect"
+                  android:icon="@android:drawable/sym_def_app_icon"
+                  android:theme="@android:style/Theme.Material.Light.NoActionBar">
+                  <activity android:name=".MainActivity" android:exported="true">
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
+                  </activity>
+              </application>
+          </manifest>
+          EOF
+          cat > apk/app/src/main/java/com/bioconnect/app/MainActivity.java <<'EOF'
+          package com.bioconnect.app;
+
+          import android.app.Activity;
+          import android.os.Bundle;
+          import android.webkit.WebSettings;
+          import android.webkit.WebView;
+          import android.webkit.WebViewClient;
+
+          // Actividad principal: muestra BioConnect dentro de la app
+          public class MainActivity extends Activity {
+              private WebView web;
+
+              @Override
+              protected void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+                  web = new WebView(this);
+                  WebSettings ajustes = web.getSettings();
+                  ajustes.setJavaScriptEnabled(true);
+                  ajustes.setDomStorageEnabled(true);
+                  web.setWebViewClient(new WebViewClient());
+                  web.loadUrl("https://jimena24serna-create.github.io/bioconnect-app/");
+                  setContentView(web);
+              }
+
+              @Override
+              public void onBackPressed() {
+                  if (web.canGoBack()) web.goBack(); else super.onBackPressed();
+              }
+          }
+          EOF
+
+      - name: Construir la APK
+        run: cd apk && gradle assembleDebug --no-daemon
+
+      - name: Guardar la APK para descargar
+        uses: actions/upload-artifact@v4
+        with:
+          name: BioConnect-APK
+          path: apk/app/build/outputs/apk/debug/app-debug.apk
