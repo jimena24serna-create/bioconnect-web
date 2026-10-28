@@ -1,0 +1,144 @@
+name: Primera app Android - Hola BioConnect
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  hola:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Instalar Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Verificar Java y el SDK de Android
+        run: |
+          java -version
+          echo "Android SDK en: $ANDROID_HOME"
+          ls "$ANDROID_HOME/platforms"
+
+      - name: Instalar Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Crear el proyecto y la actividad principal
+        run: |
+          mkdir -p hola/app/src/main/java/com/bioconnect/hola hola/app/src/main/res/layout hola/app/src/main/res/values
+          cat > hola/settings.gradle <<'EOF'
+          pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
+          dependencyResolutionManagement { repositories { google(); mavenCentral() } }
+          rootProject.name = 'HolaBioConnect'
+          include ':app'
+          EOF
+          cat > hola/build.gradle <<'EOF'
+          plugins { id 'com.android.application' version '8.5.2' apply false }
+          EOF
+          cat > hola/gradle.properties <<'EOF'
+          android.useAndroidX=true
+          org.gradle.jvmargs=-Xmx2g
+          EOF
+          cat > hola/app/build.gradle <<'EOF'
+          plugins { id 'com.android.application' }
+          android {
+              namespace 'com.bioconnect.hola'
+              compileSdk 34
+              defaultConfig {
+                  applicationId 'com.bioconnect.hola'
+                  minSdk 21
+                  targetSdk 34
+                  versionCode 1
+                  versionName '1.0'
+              }
+          }
+          EOF
+          cat > hola/app/src/main/AndroidManifest.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+              <application
+                  android:label="@string/app_name"
+                  android:icon="@android:drawable/sym_def_app_icon"
+                  android:theme="@android:style/Theme.Material.Light.DarkActionBar">
+                  <activity android:name=".MainActivity" android:exported="true">
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
+                  </activity>
+              </application>
+          </manifest>
+          EOF
+          cat > hola/app/src/main/res/values/strings.xml <<'EOF'
+          <resources>
+              <string name="app_name">Hola BioConnect</string>
+              <string name="saludo">¡Hola! Esta es mi primera aplicación Android 🌿</string>
+              <string name="autora">Nayive Jimena Serna Cañas · ADSO 3186675</string>
+              <string name="boton">Saludar</string>
+          </resources>
+          EOF
+          cat > hola/app/src/main/res/layout/activity_main.xml <<'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:gravity="center"
+              android:padding="24dp"
+              android:background="#E8F5E9">
+              <TextView
+                  android:id="@+id/txtSaludo"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="@string/saludo"
+                  android:textSize="24sp"
+                  android:textColor="#1B5E20"
+                  android:gravity="center" />
+              <TextView
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="12dp"
+                  android:text="@string/autora"
+                  android:textSize="14sp" />
+              <Button
+                  android:id="@+id/btnSaludar"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_marginTop="24dp"
+                  android:text="@string/boton" />
+          </LinearLayout>
+          EOF
+          cat > hola/app/src/main/java/com/bioconnect/hola/MainActivity.java <<'EOF'
+          package com.bioconnect.hola;
+
+          import android.app.Activity;
+          import android.os.Bundle;
+          import android.widget.Button;
+          import android.widget.Toast;
+
+          /**
+           * Actividad principal de la primera app Android.
+           * Muestra un mensaje en pantalla y un saludo al tocar el botón.
+           */
+          public class MainActivity extends Activity {
+              @Override
+              protected void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+                  setContentView(R.layout.activity_main);
+                  Button btnSaludar = findViewById(R.id.btnSaludar);
+                  btnSaludar.setOnClickListener(v ->
+                      Toast.makeText(this, "Bienvenida a BioConnect", Toast.LENGTH_LONG).show());
+              }
+          }
+          EOF
+
+      - name: Compilar la actividad principal
+        run: cd hola && gradle assembleDebug --no-daemon
+
+      - name: Guardar la APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: HolaBioConnect-APK
+          path: hola/app/build/outputs/apk/debug/app-debug.apk
